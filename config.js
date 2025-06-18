@@ -32,7 +32,7 @@ config.logo_servername = false
 
 // Center logo?
 // "true" or "false"
-config.logo_center = false
+config.logo_center = true
 
 // Display current map and gamemode?
 // "true" or "false"
