@@ -4036,7 +4036,7 @@ config.music_random_order = true
 
 // Music volume
 // Choose a value between 0 (quietest) and 100 (loudest)
-config.music_volume = 8
+config.music_volume = 4
 
 // Use Gmod volume for the music instead of manual volume
 config.music_gmod_volume = false
