@@ -308,7 +308,7 @@ config.messages_enable = true
 
 // Enter your custom messages below
 config.messages_list = [
-	"Welcome to SleekLoad!",
+	"Welcome to ddddSleekLoad!",
 	"Customize your loading screen by editing the config file",
 	"Enjoy!",
 ]
