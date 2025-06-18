@@ -4039,7 +4039,7 @@ config.music_random_order = true
 config.music_volume = 4
 
 // Use Gmod volume for the music instead of manual volume
-config.music_gmod_volume = true
+config.music_gmod_volume = false
 
 // Enable custom messages?
 // "true" or "false"
