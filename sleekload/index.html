@@ -39,5 +39,71 @@
 		<script src="js/vendor/jquery-2.1.1.min.js"></script>
 		<script src="js/vendor/jquery.backstretch.min.js"></script>
 		<script src="js/sleek.js"></script>
+		<script>
+		// ── YouTube Ad Blocker ──────────────────────────────────────────────────
+		// Intercepte le namespace YT avant que l'API l'initialise,
+		// force youtube-nocookie.com et vide la liste des pubs disponibles.
+		(function () {
+			var _yt;
+
+			Object.defineProperty(window, 'YT', {
+				configurable: true,
+				get: function () { return _yt; },
+				set: function (val) {
+					_yt = val;
+					if (val && val.Player) patchPlayer(val);
+				}
+			});
+
+			function blockAds(player) {
+				try {
+					var mods = player.getOptions ? player.getOptions() : [];
+					for (var i = 0; i < mods.length; i++) {
+						try { player.setOption(mods[i], 'availableAds', []); } catch (e) {}
+					}
+				} catch (e) {}
+			}
+
+			function patchPlayer(YT) {
+				var Original = YT.Player;
+				YT.Player = function (id, opts) {
+					opts = opts || {};
+
+					// Domaine sans cookies = moins de pubs ciblées
+					opts.host = 'https://www.youtube-nocookie.com';
+
+					// Paramètres qui réduisent les pubs et le bruit visuel
+					opts.playerVars = Object.assign({
+						rel: 0,
+						modestbranding: 1,
+						iv_load_policy: 3,
+						disablekb: 1
+					}, opts.playerVars || {});
+
+					// Ajoute onApiChange pour vider availableAds dès que le module se charge
+					var ev = opts.events || {};
+					opts.events = Object.assign({}, ev, {
+						onApiChange: function (e) {
+							blockAds(e.target);
+							if (ev.onApiChange) ev.onApiChange(e);
+						}
+					});
+
+					return new Original(id, opts);
+				};
+			}
+
+			// Fallback : toutes les 3 s on retente au cas où onApiChange est trop tôt
+			setInterval(function () {
+				try {
+					if (window.YT && window.YT.get) {
+						var p = window.YT.get('player');
+						if (p) blockAds(p);
+					}
+				} catch (e) {}
+			}, 3000);
+		})();
+		// ────────────────────────────────────────────────────────────────────────
+		</script>
 	</body>
 </html>
